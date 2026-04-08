@@ -1,55 +1,42 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ProfileData, WorkoutLog } from '../types';
+import { ProfileData } from '../types';
 
-const STORAGE_KEYS = {
-  PROFILE: '@ironpath_profile',
-  WORKOUTS: '@ironpath_workouts',
-  XP_CACHE: '@ironpath_xp',
-};
+const PROFILE_KEY = '@ironpath_profile';
+const XP_KEY = '@ironpath_xp';
 
-export const saveProfile = async (profile: ProfileData): Promise<void> => {
+export const saveProfile = async (profile: ProfileData) => {
   try {
-    await AsyncStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(profile));
-  } catch (error) {
-    console.error('Error saving profile:', error);
+    await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch (e) {
+    console.error('Error saving profile', e);
   }
 };
 
+// THIS FUNCTION MUST EXIST
 export const loadProfile = async (): Promise<ProfileData | null> => {
   try {
-    const data = await AsyncStorage.getItem(STORAGE_KEYS.PROFILE);
-    return data ? JSON.parse(data) : null;
-  } catch (error) {
-    console.error('Error loading profile:', error);
+    const jsonValue = await AsyncStorage.getItem(PROFILE_KEY);
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    console.error('Error loading profile', e);
     return null;
   }
 };
 
-export const saveWorkout = async (workout: WorkoutLog): Promise<void> => {
+export const saveXP = async (xp: number) => {
   try {
-    const existingData = await AsyncStorage.getItem(STORAGE_KEYS.WORKOUTS);
-    const workouts: WorkoutLog[] = existingData ? JSON.parse(existingData) : [];
-    workouts.push(workout);
-    await AsyncStorage.setItem(STORAGE_KEYS.WORKOUTS, JSON.stringify(workouts));
-  } catch (error) {
-    console.error('Error saving workout:', error);
+    await AsyncStorage.setItem(XP_KEY, JSON.stringify(xp));
+  } catch (e) {
+    console.error('Error saving XP', e);
   }
 };
 
-export const loadWorkouts = async (): Promise<WorkoutLog[]> => {
+export const loadXP = async (): Promise<number> => {
   try {
-    const data = await AsyncStorage.getItem(STORAGE_KEYS.WORKOUTS);
-    return data ? JSON.parse(data) : [];
-  } catch (error) {
-    console.error('Error loading workouts:', error);
-    return [];
-  }
-};
-
-export const clearStorage = async (): Promise<void> => {
-  try {
-    await AsyncStorage.multiRemove(Object.values(STORAGE_KEYS));
-  } catch (error) {
-    console.error('Error clearing storage:', error);
+    const jsonValue = await AsyncStorage.getItem(XP_KEY);
+    return jsonValue != null ? JSON.parse(jsonValue) : 0;
+  } catch (e) {
+    console.error('Error loading XP', e);
+    return 0;
   }
 };
